@@ -30,17 +30,24 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-where = ["app"]
+where = ["."]
+include = ["app*"]
 
 [tool.ruff]
 target-version = "py311"
 line-length = 100
+[tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "S"]
 ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"app/tests/**/*.py" = ["S101", "S105", "S106"]
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
+disallow_untyped_decorators = false
+exclude = ["app/tests"]
 plugins = ["pydantic.mypy"]
 warn_unused_ignores = true
 
@@ -57,3 +64,7 @@ branch = false
 [tool.coverage.report]
 show_missing = true
 skip_empty = true
+
+[[tool.mypy.overrides]]
+module = ["celery", "celery.*"]
+ignore_missing_imports = true
