@@ -1,5 +1,7 @@
 """Notification routes."""
 
+from collections.abc import Sequence
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,13 +14,13 @@ router = APIRouter(prefix="/notifications", tags=["notifications"])
 
 
 @router.get("/", response_model=list[NotificationResponse])
-async def list_notifications(db: AsyncSession = Depends(get_db)):
+async def list_notifications(db: AsyncSession = Depends(get_db)) -> Sequence[Notification]:
     result = await db.execute(select(Notification).order_by(Notification.sent_at.desc()))
     return result.scalars().all()
 
 
 @router.get("/{notif_id}", response_model=NotificationResponse)
-async def get_notification(notif_id: int, db: AsyncSession = Depends(get_db)):
+async def get_notification(notif_id: int, db: AsyncSession = Depends(get_db)) -> Notification:
     notif = await db.get(Notification, notif_id)
     if not notif:
         raise HTTPException(status_code=404, detail="Notification not found")

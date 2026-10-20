@@ -1,6 +1,11 @@
 """Tests for Celery tasks."""
 
-from app.tasks import send_email_notification, send_sms_notification, send_push_notification, send_daily_notifications
+from app.tasks import (
+    send_daily_notifications,
+    send_email_notification,
+    send_push_notification,
+    send_sms_notification,
+)
 
 
 def test_send_email_notification():
