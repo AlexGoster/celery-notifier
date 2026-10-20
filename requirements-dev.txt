@@ -1,3 +1,4 @@
+-r requirements.txt
 aiohttp>=3.10.0
 aiosqlite>=0.20.0
 pytest-asyncio>=0.23.0
