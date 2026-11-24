@@ -1,17 +1,16 @@
 """Notification channels abstraction."""
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 
 
 class NotificationChannel(ABC):
     @abstractmethod
-    async def send(self, recipient: str, subject: str, body: str) -> bool:
-        ...
+    async def send(self, recipient: str, subject: str, body: str) -> bool: ...
 
 
 class EmailChannel(NotificationChannel):
     async def send(self, recipient: str, subject: str, body: str) -> bool:
-        from app.config import settings
         logger = __import__("logging").getLogger(__name__)
         logger.info(f"[EMAIL] To {recipient}: {subject}")
         return True
@@ -32,7 +31,11 @@ class PushChannel(NotificationChannel):
 
 
 def get_channel(channel_name: str) -> NotificationChannel:
-    mapping = {"email": EmailChannel, "sms": SMSChannel, "push": PushChannel}
+    mapping: dict[str, Callable[[], NotificationChannel]] = {
+        "email": EmailChannel,
+        "sms": SMSChannel,
+        "push": PushChannel,
+    }
     cls = mapping.get(channel_name)
     if not cls:
         raise ValueError(f"Unknown channel: {channel_name}")

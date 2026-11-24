@@ -1,3 +1,3 @@
 """Router package."""
 
-from app.routers import tasks, notifications  # noqa: F401
+from app.routers import notifications, tasks  # noqa: F401

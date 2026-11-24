@@ -9,7 +9,7 @@ celery_app = Celery(
     "notifier",
     broker=settings.redis_url,
     backend=settings.redis_url,
-    include=["app.tasks.notifications"],
+    include=["app.tasks"],
 )
 
 celery_app.conf.update(
@@ -27,7 +27,7 @@ celery_app.conf.update(
     result_expires=3600,
     beat_schedule={
         "send-daily-notifications": {
-            "task": "app.tasks.notifications.send_daily_notifications",
+            "task": "app.tasks.send_daily_notifications",
             "schedule": crontab(minute="*/30"),
         },
     },

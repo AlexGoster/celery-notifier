@@ -1,7 +1,6 @@
 """Alembic env.py."""
 
 import asyncio
-import logging
 from logging.config import fileConfig
 
 from sqlalchemy import pool
@@ -14,15 +13,19 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-from app.models import Base
-from app.config import settings
+from app.config import settings  # noqa: E402
+from app.models import Base  # noqa: E402
 
-config.set_main_option("sqlalchemy.url", settings.database_url.replace("+asyncpg", ""))
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 target_metadata = Base.metadata
 
 
 def run_migrations_offline():
-    context.configure(url=config.get_main_option("sqlalchemy.url"), literal_binds=True, dialect_opts={"paramstyle": "named"})
+    context.configure(
+        url=config.get_main_option("sqlalchemy.url"),
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
     with context.begin_transaction():
         context.run_migrations()
 
@@ -34,7 +37,11 @@ def do_run_migrations(connection: Connection):
 
 
 async def run_migrations_online():
-    connectable = async_engine_from_config(config.get_section(config.config_ini_section, {}), prefix="sqlalchemy.", poolclass=pool.NullPool)
+    connectable = async_engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
     await connectable.dispose()
